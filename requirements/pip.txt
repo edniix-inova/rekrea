@@ -1,0 +1,11 @@
+# Python dependencies
+# Install with: pip install -r requirements/pip.txt
+#
+# GPU note: replace onnxruntime with onnxruntime-gpu if you have a CUDA-capable
+# GPU and WSL2/Linux CUDA drivers set up. No code changes are needed — rembg
+# will automatically use the GPU execution provider when available.
+
+rembg
+ffmpeg-python
+onnxruntime
+tqdm
