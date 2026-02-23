@@ -1,11 +1,24 @@
 # Python dependencies
 # Install with: pip install -r requirements/pip.txt
 #
-# GPU note: replace onnxruntime with onnxruntime-gpu if you have a CUDA-capable
-# GPU and WSL2/Linux CUDA drivers set up. No code changes are needed — rembg
-# will automatically use the GPU execution provider when available.
-
+# --- Background removal ---
 rembg
-ffmpeg-python
-onnxruntime
-tqdm
+onnxruntime       # CPU inference. Swap for onnxruntime-gpu to use CUDA — no code changes needed.
+
+# --- Video enhancement (Real-ESRGAN) ---
+realesrgan
+basicsr
+opencv-python-headless   # cv2 for frame I/O in the enhancement module.
+                         # Use opencv-python instead if you need GUI windows (e.g. cv2.imshow).
+
+# --- PyTorch ---
+# Install torch and torchvision separately using the official selector to match
+# your CUDA version: https://pytorch.org/get-started/locally/
+# Example (CUDA 12.1):
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+# Example (CPU only):
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# --- Shared utilities ---
+ffmpeg-python     # Python bindings for FFmpeg (frame extraction, reassembly, muxing).
+tqdm              # Progress bars in terminal output.

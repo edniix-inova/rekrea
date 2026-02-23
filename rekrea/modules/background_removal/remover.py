@@ -17,6 +17,8 @@ This is a *naive* (frame-independent) approach — the model processes each fram
 with no knowledge of neighbouring frames, which can cause flickering at the
 subject boundary.
 
+Video I/O is handled by the shared utilities in rekrea.utils.video.
+
 References
 ----------
 U2Net paper: "U2-Net: Going Deeper with Nested U-Structure for Salient Object
@@ -29,55 +31,10 @@ from pathlib import Path
 from typing import Callable, Optional
 import tempfile
 
-import ffmpeg
 from rembg import new_session, remove
 from tqdm import tqdm
 
-
-# ---------------------------------------------------------------------------
-# Internal helpers
-# ---------------------------------------------------------------------------
-
-def _get_video_framerate(video_path: Path) -> float:
-    """Return the framerate of *video_path* by probing its metadata."""
-    probe = ffmpeg.probe(str(video_path))
-    video_stream = next(s for s in probe["streams"] if s["codec_type"] == "video")
-    num, den = video_stream["r_frame_rate"].split("/")
-    return int(num) / int(den)
-
-
-# ---------------------------------------------------------------------------
-# Public pipeline steps
-# ---------------------------------------------------------------------------
-
-def extract_frames(video_path: Path, frames_dir: Path) -> float:
-    """Decode *video_path* into individual PNG frames saved in *frames_dir*.
-
-    Frames are named ``frame_00001.png``, ``frame_00002.png``, … to preserve
-    their display order.
-
-    Parameters
-    ----------
-    video_path:
-        Path to the source video file.
-    frames_dir:
-        Directory where frames are written. Created if it does not exist.
-
-    Returns
-    -------
-    float
-        The video's original framerate (needed when reassembling the video).
-    """
-    frames_dir.mkdir(parents=True, exist_ok=True)
-    framerate = _get_video_framerate(video_path)
-    (
-        ffmpeg
-        .input(str(video_path))
-        .output(str(frames_dir / "frame_%05d.png"), qscale=2)
-        .overwrite_output()
-        .run(quiet=True)
-    )
-    return framerate
+from rekrea.utils.video import extract_frames, rebuild_video
 
 
 def remove_background_from_frames(
@@ -99,6 +56,7 @@ def remove_background_from_frames(
         Directory where processed frames are written. Created if needed.
     model_name:
         rembg model identifier. Options include:
+
         - ``"u2net"`` (default) — general-purpose, ~176 MB.
         - ``"u2netp"`` — lighter and faster, lower quality.
         - ``"isnet-general-use"`` — improved segmentation for complex edges.
@@ -123,41 +81,6 @@ def remove_background_from_frames(
             progress_callback(i, total)
 
 
-def rebuild_video(
-    frames_dir: Path,
-    output_path: Path,
-    framerate: float = 30.0,
-) -> None:
-    """Reassemble PNG frames from *frames_dir* into an MP4 video.
-
-    The transparency in the processed frames is composited over black because
-    the H.264/yuv420p format does not support an alpha channel. To preserve
-    transparency, use a WebM container with the VP9 codec instead.
-
-    Parameters
-    ----------
-    frames_dir:
-        Directory containing processed frames (``frame_XXXXX.png``).
-    output_path:
-        Destination path for the output video (e.g. ``output/result.mp4``).
-    framerate:
-        Frames per second — must match the value returned by
-        :func:`extract_frames` so playback speed is correct.
-    """
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    (
-        ffmpeg
-        .input(str(frames_dir / "frame_%05d.png"), framerate=framerate)
-        .output(str(output_path), vcodec="libx264", pix_fmt="yuv420p")
-        .overwrite_output()
-        .run(quiet=True)
-    )
-
-
-# ---------------------------------------------------------------------------
-# Convenience all-in-one function
-# ---------------------------------------------------------------------------
-
 def process_video(
     input_path: Path,
     output_path: Path,
@@ -167,9 +90,10 @@ def process_video(
     """Run the full background-removal pipeline on a video file.
 
     Steps performed:
-    1. Extract frames from *input_path* into a temporary directory.
+    1. Extract frames from *input_path* (via rekrea.utils.video).
     2. Apply background removal to each frame.
-    3. Reassemble the processed frames into *output_path*.
+    3. Reassemble the processed frames into *output_path*
+       (via rekrea.utils.video).
 
     Temporary frame data is stored in a system temp directory and deleted
     automatically when processing finishes (or if an error occurs).
