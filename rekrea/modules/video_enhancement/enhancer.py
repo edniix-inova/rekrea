@@ -40,7 +40,30 @@ Repository: https://github.com/xinntao/Real-ESRGAN
 from pathlib import Path
 from typing import Callable, Optional
 import shutil
+import sys
 import tempfile
+import types
+
+# ---------------------------------------------------------------------------
+# Compatibility shim — must run before any basicsr/realesrgan import.
+#
+# basicsr.data.degradations has a hardcoded:
+#   from torchvision.transforms.functional_tensor import rgb_to_grayscale
+# That private submodule was removed in torchvision >= 0.17.0 and the
+# function moved to torchvision.transforms.v2.functional.
+#
+# We install a thin shim module under the old name so basicsr finds it,
+# without patching any files on disk (unlike the sed approach used in Colab).
+# ---------------------------------------------------------------------------
+if "torchvision.transforms.functional_tensor" not in sys.modules:
+    try:
+        import torchvision.transforms.functional_tensor  # noqa: F401
+    except ModuleNotFoundError:
+        from torchvision.transforms.v2 import functional as _tvf
+        _shim = types.ModuleType("torchvision.transforms.functional_tensor")
+        _shim.rgb_to_grayscale = _tvf.rgb_to_grayscale
+        sys.modules["torchvision.transforms.functional_tensor"] = _shim
+        del _shim, _tvf
 
 import cv2
 import torch
