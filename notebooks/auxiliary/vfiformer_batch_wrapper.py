@@ -14,11 +14,11 @@ import cv2
 from pathlib import Path
 
 # Paths (customize if needed)
-project_root = Path("/content/drive/MyDrive/Rekrea")
-input_dir = project_root / "VideoRestoration/downscaled"
-interp_dir = project_root / "VideoInterpolation/VFI/interpolated"
-model_path = project_root / "trained_models/pretrained_VFIformer/net_220.pth"
-resized_dir = project_root / "VideoInterpolation/VFI/temp_resized"
+project_root = Path("/content")
+input_dir = project_root / "downscaled_frames"
+interp_dir = project_root / "interpolated_frames"
+model_path = project_root / "trained_models"
+resized_dir = project_root / "resized_frames"
 
 # Create temporary folders for resized frames
 if not resized_dir.exists():
