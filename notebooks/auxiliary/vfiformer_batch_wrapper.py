@@ -17,7 +17,7 @@ from pathlib import Path
 project_root = Path("/content")
 input_dir = project_root / "downscaled_frames"
 interp_dir = project_root / "interpolated_frames"
-model_path = project_root / "trained_models"
+model_path = project_root / "VFIformer/pretrained_models"
 resized_dir = project_root / "resized_frames"
 
 # Create temporary folders for resized frames
