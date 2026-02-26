@@ -14,11 +14,12 @@ import cv2
 from pathlib import Path
 
 # Paths (customize if needed)
+model_name = "net_220.pth"
 project_root = Path("/content")
 input_dir = project_root / "downscaled_frames"
 interp_dir = project_root / "interpolated_frames"
-model_path = project_root / "VFIformer/pretrained_models"
 resized_dir = project_root / "resized_frames"
+model_path = project_root / "VFIformer/pretrained_models" / model_name
 
 # Create temporary folders for resized frames
 if not resized_dir.exists():
