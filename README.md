@@ -1,124 +1,40 @@
-# Rekrea
+# Rekrea: Applied AI for Creative Systems Literacy
 
-**Rekrea** is a modular video editing toolkit that integrates AI-powered techniques into media creation workflows. It provides reusable Python modules, ready-to-run pipeline scripts, and didactic Colab notebooks covering background removal, video enhancement, and frame interpolation.
+**Rekrea** is an interactive platform designed to bridge the gap between "black-box" AI tools and transparent, reproducible creative workflows. Part of the [Edniix Inova](https://edniix.com) ecosystem, it empowers artists, researchers, and developers to build technical intuition through hands-on media manipulation.
 
----
-
-## Repository Structure
-
-```
-rekrea/
-├── notebooks/              # Didactic Colab notebooks + auxiliary scripts
-│   └── auxiliary/          # Wrapper scripts used by notebooks (e.g. Colab helpers)
-├── rekrea/                 # Python package — modules and shared utilities
-│   ├── modules/
-│   │   ├── background_removal/
-│   │   └── video_enhancement/
-│   └── utils/
-├── scripts/                # Standalone pipeline scripts with GUI
-└── requirements/           # Dependency files
-```
+## 🌟 The Vision
+In an era of generative AI, understanding the *mechanics* of the pipeline is as important as the output. Rekrea is structured as a didactic journey:
+1.  **Learn** the theory and logic via interactive notebooks.
+2.  **Integrate** logic into custom systems using modular Python components.
+3.  **Execute** professional-grade pipelines through standalone scripts.
 
 ---
 
-## Functionalities
+## 🏛 Project Architecture: The Three Pillars
 
-### Background Removal
-Removes backgrounds from every frame of a video using neural segmentation. Powered by [rembg](https://github.com/danielgatis/rembg) with U2Net and BiRefNet models. Outputs video frames with transparency preserved as PNG before final reassembly.
+Rekrea is organized into three distinct layers, moving from educational exploration to production-ready execution:
 
-### Video Enhancement
-Upscales and restores video quality using [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN). Supports 2× and 4× upscaling with models tuned for general footage or anime/illustration content. Handles large frames via tiled inference to stay within VRAM limits.
+### 1. [The Notebooks](./notebooks/) (Learn)
+Didactic Google Colab environments that break down complex AI functions (Background Removal, Enhancement, Interpolation) into step-by-step logic.
+* **Best for:** Learning, experimentation, and cloud-based prototyping.
 
-### Frame Interpolation
-Generates intermediate frames between existing ones to increase effective frame rate. Uses [VFIformer](https://github.com/dvlab-research/VFIformer) for high-quality temporal interpolation. Demonstrated in the Colab notebook with a batch wrapper for efficient processing.
+### 2. [The Modules](./rekrea/) (Build)
+The core `rekrea` Python package. This is a modular implementation of the functions explored in the notebooks, designed to be imported into larger pipelines.
+* **Best for:** Developers building custom AI-driven software.
 
----
-
-## Notebooks
-
-Interactive Colab notebooks under `notebooks/` explain each functionality step by step, covering model setup, parameter choices, and expected results. They are intended as both learning material and starting points for custom workflows.
-
-| Notebook | Functionality | Model |
-|---|---|---|
-| `VideoEditing_BackgroundRemoval_RemBG_Pipeline.ipynb` | Background removal | rembg / U2Net |
-| `VideoEditing_Enhancement_RealESRGAN_Pipeline.ipynb` | Video enhancement | Real-ESRGAN |
-| `VideoEditing_Interpolation_VFI_Pipelne.ipynb` | Frame interpolation | VFIformer |
-
-Auxiliary scripts used by the notebooks (e.g. `vfiformer_batch_wrapper.py`) live in `notebooks/auxiliary/`.
+### 3. [The Scripts](./scripts/) (Execute)
+Ready-to-run pipeline implementations with GUI interfaces. These leverage the modules to provide a local, high-performance desktop experience.
+* **Best for:** Batch processing and local production workflows.
 
 ---
 
-## Modules
+## 🛠 Quick Start
 
-The `rekrea/` package exposes each functionality as an independent module. All modules share common video I/O utilities backed by FFmpeg.
-
-### `rekrea.modules.background_removal`
-
-```python
-from rekrea.modules.background_removal import process_video
-
-process_video(
-    input_path="input.mp4",
-    output_path="output.mp4",
-    model="u2net",           # u2net | u2netp | isnet-general-use | birefnet-general
-    progress_callback=None,
-)
-```
-
-Key functions: `process_video`, `remove_background_from_frames`, `extract_frames`, `rebuild_video`.
-
-### `rekrea.modules.video_enhancement`
-
-```python
-from rekrea.modules.video_enhancement import process_video, MODEL_CONFIGS
-
-process_video(
-    input_path="input.mp4",
-    output_path="output.mp4",
-    model_name="RealESRGAN_x4plus",   # see MODEL_CONFIGS for all options
-    outscale=4,
-    tile=512,                          # reduce if VRAM is limited; 0 = no tiling
-    progress_callback=None,
-)
-```
-
-Available models:
-
-| Model | Scale | Notes |
-|---|---|---|
-| `RealESRGAN_x4plus` | 4× | General purpose (default) |
-| `RealESRNet_x4plus` | 4× | Fewer GAN artifacts |
-| `RealESRGAN_x2plus` | 2× | Faster, lower memory |
-| `RealESRGAN_x4plus_anime_6B` | 4× | Anime / illustration |
-
-Key functions: `process_video`, `enhance_frames`, `create_upsampler`.
-
-### `rekrea.utils.video`
-
-Shared FFmpeg utilities used internally by all modules:
-
-| Function | Description |
-|---|---|
-| `extract_frames` | Decode video to PNG frames |
-| `rebuild_video` | Reassemble frames to H.264 MP4 |
-| `mux_audio` | Attach audio track from source video |
-| `get_video_info` | Probe metadata, detect VFR/CFR |
-| `downscale_frames` | Batch downscale frames (Lanczos) |
-
----
-
-## Scripts
-
-`scripts/` contains GUI pipeline applications for local use. Run them directly — a file-picker dialog opens, then a settings dialog (where applicable), followed by a live progress window.
-
-| Script | Functionality |
-|---|---|
-| `background_removal_pipeline.py` | Background removal with Tkinter GUI |
-| `video_enhancement_pipeline.py` | Enhancement with model/scale/tile settings |
-
-Output is written to `scripts/playground_data/output/` (not tracked by git).
-
----
+### System Requirements
+Rekrea is optimized for **Linux (including WSL2)**.
+```bash
+# Install system dependencies (FFmpeg, Tkinter)
+bash requirements/wsl.sh
 
 ## Environment Layout
 
