@@ -41,3 +41,11 @@ docs/_build/
 # ================================
 
 .venv/
+
+# ================================
+# Motion (Remotion / Node)
+# ================================
+
+motion/node_modules/
+motion/out/
+motion/build/

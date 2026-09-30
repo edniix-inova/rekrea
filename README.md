@@ -12,7 +12,7 @@ In an era of generative AI, understanding the *mechanics* of the pipeline is as 
 
 ## 🏛 Project Architecture: The Three Pillars
 
-Rekrea is organized into three distinct layers, moving from educational exploration to production-ready execution:
+Rekrea is organized into three core layers, moving from educational exploration to production-ready execution:
 
 ### 1. [The Notebooks](./notebooks/) (Learn)
 Didactic Google Colab environments that break down complex AI functions (Background Removal, Enhancement, Interpolation) into step-by-step logic.
@@ -25,6 +25,18 @@ The core `rekrea` Python package. This is a modular implementation of the functi
 ### 3. [The Scripts](./scripts/) (Execute)
 Ready-to-run pipeline implementations with GUI interfaces. These leverage the modules to provide a local, high-performance desktop experience.
 * **Best for:** Batch processing and local production workflows.
+
+---
+
+## 🎬 Motion Graphics (Experimental)
+
+[`motion/`](./motion/) is a self-contained [Remotion](https://www.remotion.dev/) (React/TypeScript) project for programmatic motion graphics such as titles, lower thirds and overlays. It is independent from the Python package; graphics rendered there (including transparent ProRes 4444) can be composited with footage processed by Rekrea.
+
+```bash
+cd motion && npm install && npm run studio
+```
+
+See [`motion/README.md`](./motion/README.md) for details.
 
 ---
 
