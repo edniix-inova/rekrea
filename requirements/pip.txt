@@ -19,6 +19,17 @@ opencv-python-headless   # cv2 for frame I/O in the enhancement module.
 # Example (CPU only):
 #   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
+# --- Frame interpolation (VFIformer) ---
+# VFIformer itself is cloned from GitHub (not pip-installable). The packages
+# below are its Python runtime dependencies.
+imageio           # Image I/O used internally by VFIformer.
+scikit-image      # Image processing utilities (structural similarity, etc.).
+einops            # Tensor rearrangement (rearrange/repeat) used in transformer layers.
+tensorboardX      # Logging infrastructure imported by VFIformer even during inference.
+# git must also be available on the system PATH for setup_vfiformer() to clone the repo.
+# Download net_220.pth (~230 MB) separately:
+#   https://huggingface.co/xmanifold/vfiformer/tree/main/pretrained_VFIformer
+
 # --- Shared utilities ---
 ffmpeg-python     # Python bindings for FFmpeg (frame extraction, reassembly, muxing).
 tqdm              # Progress bars in terminal output.
