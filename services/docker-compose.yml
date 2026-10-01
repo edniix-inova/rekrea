@@ -1,0 +1,30 @@
+# Optional containerised services for Rekrea (not imported by the core package).
+#
+# Start:  docker compose -f services/docker-compose.yml up -d
+# Stop:   docker compose -f services/docker-compose.yml down
+#
+# Requires Docker with NVIDIA GPU support (Docker Desktop + WSL2 integration works out of the box).
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: rekrea-ollama
+    ports:
+      - "127.0.0.1:11434:11434"      # localhost only
+    volumes:
+      - ollama_models:/root/.ollama  # downloaded models persist across restarts
+    environment:
+      # Unload the model from VRAM after this idle time so the GPU is free for other steps
+      # (e.g. image generation). Raise it for snappier repeated calls.
+      - OLLAMA_KEEP_ALIVE=${OLLAMA_KEEP_ALIVE:-2m}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  ollama_models:

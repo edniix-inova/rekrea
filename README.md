@@ -40,6 +40,20 @@ See [`motion/README.md`](./motion/README.md) for details.
 
 ---
 
+## 🧪 Prompting & Services (Experimental)
+
+[`services/`](./services/) holds optional containerised services (currently [Ollama](https://ollama.com/)) that the modules reach over HTTP, so the core package needs no extra dependencies. `rekrea.modules.prompting` expands a short idea into a structured image prompt through a swappable backend interface.
+
+```bash
+docker compose -f services/docker-compose.yml up -d
+docker exec rekrea-ollama ollama pull llama3.2:3b
+python scripts/prompt_generation_pipeline.py "a vintage motorcycle at dawn"
+```
+
+See [`services/README.md`](./services/README.md) for details.
+
+---
+
 ## 🗂️ Environment Layout
 
 Both notebooks and scripts expect a **rekrea base directory** (either `MyDrive/rekrea/` in Colab or a local path) with the following layout:
