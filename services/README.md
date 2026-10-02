@@ -46,3 +46,20 @@ Notes:
 - **Limits:** width and height must be multiples of 8 and at most `IMAGEGEN_MAX_SIZE` (default 768), to protect small GPUs from out-of-memory errors. After a failed generation the model is unloaded so the next request starts clean.
 - **Another model:** set `IMAGEGEN_MODEL` to a Stable Diffusion 1.x-class Hugging Face id. SDXL-class models need a different pipeline and more VRAM, and are not supported yet.
 - **Reproducibility:** the same prompt, seed, size, steps and model give the same image on the same setup. Each run saves a JSON next to the PNG with these values.
+
+### Troubleshooting: CUDA does not initialise in the container
+
+If this fails with `Error 500: named symbol not found` (or similar):
+
+```bash
+docker exec rekrea-imagegen python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())"
+```
+
+the CUDA runtime bundled with torch may be too new for the host driver or WSL libraries. Rebuild with a torch build on an older CUDA 12.x runtime:
+
+```bash
+# pick an index that has a torch build for your Python (3.11); cu126 and cu128 are common
+TORCH_INDEX_URL=https://download.pytorch.org/whl/cu126 \
+  docker compose -f services/docker-compose.yml build --no-cache imagegen
+docker compose -f services/docker-compose.yml up -d
+```

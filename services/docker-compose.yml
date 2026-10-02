@@ -27,7 +27,12 @@ services:
     restart: unless-stopped
 
   imagegen:
-    build: ./imagegen
+    build:
+      context: ./imagegen
+      args:
+        # Leave empty for the default torch wheel. Set e.g. to
+        # https://download.pytorch.org/whl/cu126 if CUDA fails to initialise in the container.
+        TORCH_INDEX_URL: ${TORCH_INDEX_URL:-}
     container_name: rekrea-imagegen
     ports:
       - "127.0.0.1:8000:8000"        # localhost only
