@@ -1,0 +1,9 @@
+# Image generation service (runs inside the container)
+# torch from PyPI ships its own CUDA 12 runtime; only the NVIDIA driver is needed on the host.
+torch
+diffusers>=0.30
+transformers
+accelerate
+safetensors
+fastapi
+uvicorn

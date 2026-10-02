@@ -26,5 +26,27 @@ services:
               capabilities: [gpu]
     restart: unless-stopped
 
+  imagegen:
+    build: ./imagegen
+    container_name: rekrea-imagegen
+    ports:
+      - "127.0.0.1:8000:8000"        # localhost only
+    volumes:
+      - hf_cache:/root/.cache/huggingface   # downloaded model weights persist
+    environment:
+      # Hugging Face model id. Default is Stable Diffusion 1.5 (fits ~4 GB of free VRAM).
+      - IMAGEGEN_MODEL=${IMAGEGEN_MODEL:-stable-diffusion-v1-5/stable-diffusion-v1-5}
+      # Seconds idle before the model is dropped from VRAM (0 = keep loaded).
+      - IMAGEGEN_KEEP_ALIVE=${IMAGEGEN_KEEP_ALIVE:-120}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
 volumes:
   ollama_models:
+  hf_cache:

@@ -85,6 +85,14 @@ class OllamaBackend(PromptBackend):
         wanted = self.model if ":" in self.model else f"{self.model}:latest"
         return wanted in names
 
+    def unload(self) -> None:
+        """Ask the server to drop the model from VRAM now.
+
+        Useful before another GPU-heavy step (e.g. image generation) so the two
+        models do not compete for memory.
+        """
+        self._request("/api/generate", {"model": self.model, "keep_alive": 0})
+
     def generate(
         self,
         prompt: str,

@@ -42,12 +42,17 @@ See [`motion/README.md`](./motion/README.md) for details.
 
 ## 🧪 Prompting & Services (Experimental)
 
-[`services/`](./services/) holds optional containerised services (currently [Ollama](https://ollama.com/)) that the modules reach over HTTP, so the core package needs no extra dependencies. `rekrea.modules.prompting` expands a short idea into a structured image prompt through a swappable backend interface.
+[`services/`](./services/) holds optional containerised services that the modules reach over HTTP, so the core package needs no extra dependencies:
+
+- **Ollama** for prompting: `rekrea.modules.prompting` expands a short idea into a structured image prompt.
+- **imagegen** for text-to-image (Stable Diffusion 1.5 via Hugging Face `diffusers`): `rekrea.modules.image_generation` is its client.
+
+Both modules sit behind small backend interfaces, so engines can be swapped. The services share one GPU and unload their models when idle.
 
 ```bash
-docker compose -f services/docker-compose.yml up -d
+docker compose -f services/docker-compose.yml up -d --build
 docker exec rekrea-ollama ollama pull llama3.2:3b
-python scripts/prompt_generation_pipeline.py "a vintage motorcycle at dawn"
+python scripts/image_generation_pipeline.py "a vintage motorcycle at dawn"
 ```
 
 See [`services/README.md`](./services/README.md) for details.

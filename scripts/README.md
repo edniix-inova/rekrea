@@ -7,6 +7,7 @@ The `scripts/` directory provides standalone, GUI-based applications for local m
 | `background_removal_pipeline.py` | Background removal with Tkinter GUI |
 | `video_enhancement_pipeline.py` | Enhancement with model/scale/tile settings |
 | `prompt_generation_pipeline.py` | Expands an idea into an image prompt via a local Ollama server (CLI, see [`services/`](../services/README.md)) |
+| `image_generation_pipeline.py` | Idea or prompt to image: Ollama for the prompt, the `imagegen` service for the image (CLI) |
 
 Output is written to `scripts/playground_data/output/` (not tracked by git).
 
